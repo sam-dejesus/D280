@@ -1,0 +1,19 @@
+table{
+    border: 1px solid red;
+    height: 100vh;
+    width: 100%;
+}
+path{
+    fill: black;
+}
+path:hover{
+fill: aqua;
+}
+.map{
+    width: 70%;
+}
+.info{
+    width: 30%;
+    background-color: bisque;
+    border: 2px solid rgb(253, 214, 165);
+}
