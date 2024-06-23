@@ -1,5 +1,6 @@
 import { Component, AfterViewInit } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
+import { ApiService } from './api.service'
 
 @Component({
   selector: 'app-root',
@@ -11,6 +12,8 @@ import { RouterOutlet } from '@angular/router'
 export class AppComponent implements AfterViewInit {
   title = 'world-map'
 
+  constructor(private apiService: ApiService) {}
+
   ngAfterViewInit(): void {
     const paths = document.getElementsByTagName('path')
     const country_name = document.getElementById('country_name')
@@ -21,13 +24,11 @@ export class AppComponent implements AfterViewInit {
     const lon = document.getElementById('lon')
 
     for (let i = 0; i < paths.length; i++) {
-      paths[i].addEventListener('click', function() {
-        const pathId = this.id
+      paths[i].addEventListener('click', () => {
+        const pathId = paths[i].id
 
-        fetch(`http://api.worldbank.org/v2/country/${pathId}?format=json`)
-          .then(response => response.json())
-          .then(data => {
-            console.log(data)
+        this.apiService.getCountryData(pathId).subscribe({
+          next: (data) => {
             const countryData = data[1][0]
 
             if (country_name) country_name.textContent = `Country Name: ${countryData.name}`
@@ -36,8 +37,11 @@ export class AppComponent implements AfterViewInit {
             if (income_level) income_level.textContent = `Income Level: ${countryData.incomeLevel.value}`
             if (lat) lat.textContent = `Latitude: ${countryData.latitude}`
             if (lon) lon.textContent = `Longitude: ${countryData.longitude}`
-          })
-          .catch(error => console.error('Error:', error))
+          },
+          error: (err) => {
+            console.error('Error:', err)
+          }
+        })
       })
     }
   }
